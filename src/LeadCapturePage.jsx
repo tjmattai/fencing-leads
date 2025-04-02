@@ -122,12 +122,12 @@ export default function LeadCapturePage() {
             {/* Form Section */}
             <div className="md:w-2/3">
               <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2">
-                {submitted ? "Thank You!" : "Get Your Free Fence Quote Today"}
+                {submitted ? "Thank You!" : "Free Fence Installation Quote"}
               </h1>
               <p className="text-gray-300 mb-8">
                 {submitted
                   ? "We received your request and will be in touch within 1 business day."
-                  : "Fill out the form below and we'll get back to you with a custom quote ASAP!"}
+                  : "Get your custom quote in minutes!"}
               </p>
 
               {!submitted && (
