@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 
+const Input = ({ label, name, type = "text", placeholder }) => {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-300 mb-1">{label}</label>
+      <input
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        required
+        className="w-full p-3 bg-gray-800/50 border border-gray-700 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-400"
+      />
+    </div>
+  );
+};
+
 export default function LeadCapturePage() {
   const [submitted, setSubmitted] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
@@ -265,21 +280,6 @@ export default function LeadCapturePage() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Input({ label, name, type = "text", placeholder }) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-gray-300 mb-1">{label}</label>
-      <input
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        required
-        className="w-full p-3 bg-gray-800/50 border border-gray-700 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-400"
-      />
     </div>
   );
 } 
