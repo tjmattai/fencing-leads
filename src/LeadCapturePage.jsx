@@ -127,7 +127,7 @@ export default function LeadCapturePage() {
               <p className="text-gray-300 mb-8">
                 {submitted
                   ? "We received your request and will be in touch within 1 business day."
-                  : "Get your custom quote in minutes!"}
+                  : "Enter your details and we'll get you a quote ASAP."}
               </p>
 
               {!submitted && (
