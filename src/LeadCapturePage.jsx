@@ -21,7 +21,6 @@ export default function LeadCapturePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
   const [phone, setPhone] = useState("");
-  const [selectedFiles, setSelectedFiles] = useState([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -60,64 +59,19 @@ export default function LeadCapturePage() {
     setPhone(formatted);
   };
 
-  const handleFileSelect = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedFiles(files.slice(0, 3)); // Limit to 3 files
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
       const formData = new FormData(e.target);
-      console.log('Starting photo processing...');
-      const photos = await Promise.all(Array.from(selectedFiles).map(async file => {
-        console.log('Processing file:', {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          'size (MB)': (file.size / 1024 / 1024).toFixed(2)
-        });
-        const base64 = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const base64String = e.target.result.split(',')[1];
-            console.log('File converted to base64:', {
-              name: file.name,
-              'base64 length': base64String.length,
-              'first 50 chars': base64String.substring(0, 50) + '...'
-            });
-            resolve(base64String);
-          };
-          reader.readAsDataURL(file);
-        });
-        return {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          base64: base64
-        };
-      }));
-
       const data = {
         fullName: formData.get('fullName'),
         email: formData.get('email'),
         phone: formData.get('phone'),
         address: formData.get('address'),
-        description: formData.get('description'),
-        photos: photos
+        description: formData.get('description')
       };
-
-      console.log('Submitting form data:', {
-        ...data,
-        photos: data.photos.map(p => ({
-          name: p.name,
-          type: p.type,
-          size: p.size,
-          'base64 length': p.base64.length
-        }))
-      });
 
       const response = await fetch('https://script.google.com/macros/s/AKfycbxDegMyX17A98SpEeYPwWYtDxotW6gn1SLDfZ-V7iaXPciA5Ctav4WrpFlXEQzTlzlZ/exec', {
         method: 'POST',
@@ -220,53 +174,6 @@ export default function LeadCapturePage() {
                       placeholder="Approx. linear footage, layout, gates, urgency, etc."
                       required
                     />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Upload Photos (optional)</label>
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <input
-                          name="photos"
-                          type="file"
-                          className="hidden"
-                          id="file-upload"
-                          multiple
-                          accept="image/*"
-                          onChange={handleFileSelect}
-                        />
-                        <label
-                          htmlFor="file-upload"
-                          className="w-full p-3 bg-gray-800/50 border border-gray-700 rounded-xl shadow-sm hover:bg-gray-800/70 transition-colors cursor-pointer text-gray-300 flex items-center justify-center"
-                        >
-                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                          </svg>
-                          Choose files
-                        </label>
-                      </div>
-                      {selectedFiles.length > 0 && (
-                        <div className="bg-gray-800/30 p-3 rounded-lg">
-                          <p className="text-sm text-gray-300 mb-2">Selected files:</p>
-                          <ul className="space-y-1">
-                            {selectedFiles.map((file, index) => (
-                              <li key={index} className="text-sm text-gray-400 flex items-center">
-                                <svg className="w-4 h-4 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                {file.name}
-                                <span className="ml-2 text-xs text-gray-500">
-                                  ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                          {selectedFiles.length >= 3 && (
-                            <p className="text-xs text-yellow-400 mt-2">Maximum 3 files allowed</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
                   </div>
 
                   <button
