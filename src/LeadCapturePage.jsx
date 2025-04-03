@@ -111,16 +111,12 @@ export default function LeadCapturePage() {
 
       const response = await fetch("https://script.google.com/macros/s/AKfycbyTcFlTCQsMTi8zxXy1fkGqF3M6zJl95HsRED-JC7Q4dzPRw_ngr8lU3R-157EprRGANw/exec", {
         method: "POST",
+        mode: "no-cors",
         body: formData
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.text();
-      console.log('Submission response:', result);
-
+      // Since we're using no-cors mode, we can't check response.ok
+      // Instead, we'll assume success if we get here without an error
       setSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
