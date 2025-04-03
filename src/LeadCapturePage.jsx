@@ -71,24 +71,60 @@ export default function LeadCapturePage() {
 
     try {
       const formData = new FormData(e.target);
-      
-      // Add photos to FormData
-      selectedFiles.forEach((file, index) => {
-        formData.append(`photo${index}`, file);
-      });
+      console.log('Starting photo processing...');
+      const photos = await Promise.all(Array.from(selectedFiles).map(async file => {
+        console.log('Processing file:', {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          'size (MB)': (file.size / 1024 / 1024).toFixed(2)
+        });
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const base64String = e.target.result.split(',')[1];
+            console.log('File converted to base64:', {
+              name: file.name,
+              'base64 length': base64String.length,
+              'first 50 chars': base64String.substring(0, 50) + '...'
+            });
+            resolve(base64String);
+          };
+          reader.readAsDataURL(file);
+        });
+        return {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          base64: base64
+        };
+      }));
 
-      console.log('Submitting form with photos:', {
-        fileCount: selectedFiles.length,
-        files: Array.from(selectedFiles).map(f => ({
-          name: f.name,
-          type: f.type,
-          size: f.size
+      const data = {
+        fullName: formData.get('fullName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        address: formData.get('address'),
+        description: formData.get('description'),
+        photos: photos
+      };
+
+      console.log('Submitting form data:', {
+        ...data,
+        photos: data.photos.map(p => ({
+          name: p.name,
+          type: p.type,
+          size: p.size,
+          'base64 length': p.base64.length
         }))
       });
 
       const response = await fetch('https://script.google.com/macros/s/AKfycbxDegMyX17A98SpEeYPwWYtDxotW6gn1SLDfZ-V7iaXPciA5Ctav4WrpFlXEQzTlzlZ/exec', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
       });
 
       console.log('Form submitted successfully');
