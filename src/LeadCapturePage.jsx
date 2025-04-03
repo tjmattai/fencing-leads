@@ -18,8 +18,10 @@ const Input = ({ label, name, type = "text", placeholder }) => {
 
 export default function LeadCapturePage() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
   const [phone, setPhone] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -58,42 +60,47 @@ export default function LeadCapturePage() {
     setPhone(formatted);
   };
 
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files.slice(0, 3)); // Limit to 3 files
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-
-    // Get the file input element
-    const fileInput = document.getElementById('file-upload');
-    const files = fileInput.files;
-
-    // Create FormData for file upload
-    const formDataToSend = new FormData();
-    formDataToSend.append('fullName', formData.get('fullName'));
-    formDataToSend.append('email', formData.get('email'));
-    formDataToSend.append('phone', formData.get('phone'));
-    formDataToSend.append('address', formData.get('address'));
-    formDataToSend.append('description', formData.get('description'));
-
-    // Append each file to FormData
-    if (files.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        formDataToSend.append('photos', files[i]);
-      }
-    }
+    setIsSubmitting(true);
 
     try {
+      // Create a new FormData instance
+      const formData = new FormData();
+      
+      // Add all form fields explicitly
+      formData.append('fullName', e.target.fullName.value);
+      formData.append('email', e.target.email.value);
+      formData.append('phone', e.target.phone.value);
+      formData.append('address', e.target.address.value);
+      formData.append('description', e.target.description.value);
+      
+      // Add files if they exist
+      const fileInput = document.getElementById('file-upload');
+      if (fileInput.files.length > 0) {
+        // Limit to first 3 files to improve performance
+        for (let i = 0; i < Math.min(3, fileInput.files.length); i++) {
+          formData.append('photos', fileInput.files[i]);
+        }
+      }
+
       const response = await fetch("https://script.google.com/macros/s/AKfycbyTcFlTCQsMTi8zxXy1fkGqF3M6zJl95HsRED-JC7Q4dzPRw_ngr8lU3R-157EprRGANw/exec", {
         method: "POST",
         mode: "no-cors",
-        body: formDataToSend
+        body: formData
       });
 
-      // Since we're using no-cors mode, we can't check response.ok
-      // Instead, we'll assume success if we get here
       setSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
       alert('Unable to submit form. Please try again later or contact us directly.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -168,31 +175,59 @@ export default function LeadCapturePage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1">Upload Photos (optional)</label>
-                    <div className="relative">
-                      <input
-                        name="photos"
-                        type="file"
-                        className="hidden"
-                        id="file-upload"
-                        multiple
-                      />
-                      <label
-                        htmlFor="file-upload"
-                        className="w-full p-3 bg-gray-800/50 border border-gray-700 rounded-xl shadow-sm hover:bg-gray-800/70 transition-colors cursor-pointer text-gray-300 flex items-center justify-center"
-                      >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Choose files
-                      </label>
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <input
+                          name="photos"
+                          type="file"
+                          className="hidden"
+                          id="file-upload"
+                          multiple
+                          accept="image/*"
+                          onChange={handleFileSelect}
+                        />
+                        <label
+                          htmlFor="file-upload"
+                          className="w-full p-3 bg-gray-800/50 border border-gray-700 rounded-xl shadow-sm hover:bg-gray-800/70 transition-colors cursor-pointer text-gray-300 flex items-center justify-center"
+                        >
+                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                          </svg>
+                          Choose files
+                        </label>
+                      </div>
+                      {selectedFiles.length > 0 && (
+                        <div className="bg-gray-800/30 p-3 rounded-lg">
+                          <p className="text-sm text-gray-300 mb-2">Selected files:</p>
+                          <ul className="space-y-1">
+                            {selectedFiles.map((file, index) => (
+                              <li key={index} className="text-sm text-gray-400 flex items-center">
+                                <svg className="w-4 h-4 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                {file.name}
+                                <span className="ml-2 text-xs text-gray-500">
+                                  ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                          {selectedFiles.length >= 3 && (
+                            <p className="text-xs text-yellow-400 mt-2">Maximum 3 files allowed</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-6 rounded-xl text-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    disabled={isSubmitting}
+                    className={`w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-6 rounded-xl text-lg font-medium transition-all transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                      isSubmitting ? 'opacity-75 cursor-not-allowed' : 'hover:from-blue-600 hover:to-purple-600'
+                    }`}
                   >
-                    Submit Request
+                    {isSubmitting ? 'Submitting...' : 'Submit Request'}
                   </button>
                 </form>
               )}
