@@ -1,8 +1,8 @@
-import { google } from 'googleapis';
+const { google } = require('googleapis');
 
 const sheets = google.sheets('v4');
 
-export const handler = async (event, context) => {
+exports.handler = async (event, context) => {
   // Handle CORS preflight requests
   if (event.httpMethod === 'OPTIONS') {
     return {
