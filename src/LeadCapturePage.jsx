@@ -76,7 +76,17 @@ export default function LeadCapturePage() {
         email: formData.get('email'),
         phone: formData.get('phone'),
         address: formData.get('address'),
-        description: formData.get('description')
+        description: formData.get('description'),
+        photos: await Promise.all(Array.from(selectedFiles).map(async file => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          base64: await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+            reader.readAsDataURL(file);
+          })
+        })))
       };
 
       console.log('Submitting form data:', data);
