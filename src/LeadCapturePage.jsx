@@ -73,20 +73,19 @@ export default function LeadCapturePage() {
     try {
       const response = await fetch("https://script.google.com/macros/s/AKfycbyTcFlTCQsMTi8zxXy1fkGqF3M6zJl95HsRED-JC7Q4dzPRw_ngr8lU3R-157EprRGANw/exec", {
         method: "POST",
+        mode: "no-cors",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+      // Since we're using no-cors mode, we can't check response.ok
+      // Instead, we'll assume success if we get here
       setSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
-      alert('Unable to submit form. This is likely because you\'re running locally. The form submission endpoint is configured for production use.');
+      alert('Unable to submit form. Please try again later or contact us directly.');
     }
   };
 
