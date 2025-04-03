@@ -89,11 +89,26 @@ export default function LeadCapturePage() {
         }
       }
 
+      console.log('Submitting form data:', {
+        fullName: e.target.fullName.value,
+        email: e.target.email.value,
+        phone: e.target.phone.value,
+        address: e.target.address.value,
+        description: e.target.description.value,
+        files: fileInput.files.length
+      });
+
       const response = await fetch("https://script.google.com/macros/s/AKfycbyTcFlTCQsMTi8zxXy1fkGqF3M6zJl95HsRED-JC7Q4dzPRw_ngr8lU3R-157EprRGANw/exec", {
         method: "POST",
-        mode: "no-cors",
         body: formData
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.text();
+      console.log('Submission response:', result);
 
       setSubmitted(true);
     } catch (error) {
