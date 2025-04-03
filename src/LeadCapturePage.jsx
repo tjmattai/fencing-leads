@@ -70,53 +70,35 @@ export default function LeadCapturePage() {
     setIsSubmitting(true);
 
     try {
-      // Create a new FormData instance
-      const formData = new FormData();
-      
-      // Add all form fields explicitly
-      formData.append('fullName', e.target.fullName.value);
-      formData.append('email', e.target.email.value);
-      formData.append('phone', e.target.phone.value);
-      formData.append('address', e.target.address.value);
-      formData.append('description', e.target.description.value);
-      
-      // Add files if they exist
-      const fileInput = document.getElementById('file-upload');
-      if (fileInput.files.length > 0) {
-        // Convert files to base64 strings
-        for (let i = 0; i < Math.min(3, fileInput.files.length); i++) {
-          const file = fileInput.files[i];
-          const reader = new FileReader();
-          
-          await new Promise((resolve, reject) => {
-            reader.onload = () => {
-              const base64String = reader.result.split(',')[1];
-              formData.append(`photo${i + 1}`, base64String);
-              resolve();
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
-        }
+      const formData = new FormData(e.target);
+      const data = {
+        fullName: formData.get('fullName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        address: formData.get('address'),
+        description: formData.get('description')
+      };
+
+      console.log('Submitting form data:', data);
+
+      const response = await fetch('/.netlify/functions/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
       }
 
-      console.log('Submitting form data:', {
-        fullName: e.target.fullName.value,
-        email: e.target.email.value,
-        phone: e.target.phone.value,
-        address: e.target.address.value,
-        description: e.target.description.value,
-        files: fileInput.files.length
-      });
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to submit form');
+      }
 
-      const response = await fetch("https://script.google.com/macros/s/AKfycbyTcFlTCQsMTi8zxXy1fkGqF3M6zJl95HsRED-JC7Q4dzPRw_ngr8lU3R-157EprRGANw/exec", {
-        method: "POST",
-        mode: "no-cors",
-        body: formData
-      });
-
-      // Since we're using no-cors mode, we can't check response.ok
-      // Instead, we'll assume success if we get here without an error
+      console.log('Form submitted successfully');
       setSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
@@ -129,6 +111,13 @@ export default function LeadCapturePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-10"></div>
+      
+      {/* Hidden iframe for form submission */}
+      <iframe 
+        name="form-response" 
+        style={{ display: 'none' }}
+        title="Form Response"
+      />
       
       {/* Header Image Section */}
       <div className="w-full relative h-32 md:h-40">
@@ -167,7 +156,10 @@ export default function LeadCapturePage() {
               </p>
 
               {!submitted && (
-                <form className="space-y-6" onSubmit={handleSubmit}>
+                <form 
+                  className="space-y-6" 
+                  onSubmit={handleSubmit}
+                >
                   <Input label="Full Name" name="fullName" placeholder="Jane Doe" />
                   <Input label="Email Address" name="email" type="email" placeholder="you@example.com" />
                   <div>
