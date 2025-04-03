@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import confetti from 'canvas-confetti'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import LeadCapturePage from './LeadCapturePage'
+import NewCustomersPage from './NewCustomersPage'
 import { pageview } from './analytics'
 
 function AppContent() {
@@ -15,7 +16,7 @@ function AppContent() {
   return (
     <Routes>
       <Route path="/" element={<LeadCapturePage />} />
-      <Route path="/new-customer" element={<LeadCapturePage />} />
+      <Route path="/new-customers" element={<NewCustomersPage />} />
     </Routes>
   )
 }
