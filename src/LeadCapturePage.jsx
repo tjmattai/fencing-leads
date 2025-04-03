@@ -123,12 +123,17 @@ export default function LeadCapturePage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        mode: 'no-cors',
         body: JSON.stringify(data)
       });
 
-      console.log('Form submitted successfully');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Form submitted successfully:', result);
       setSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
