@@ -83,9 +83,20 @@ export default function LeadCapturePage() {
       // Add files if they exist
       const fileInput = document.getElementById('file-upload');
       if (fileInput.files.length > 0) {
-        // Limit to first 3 files to improve performance
+        // Convert files to base64 strings
         for (let i = 0; i < Math.min(3, fileInput.files.length); i++) {
-          formData.append('photos', fileInput.files[i]);
+          const file = fileInput.files[i];
+          const reader = new FileReader();
+          
+          await new Promise((resolve, reject) => {
+            reader.onload = () => {
+              const base64String = reader.result.split(',')[1];
+              formData.append(`photo${i + 1}`, base64String);
+              resolve();
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
         }
       }
 
