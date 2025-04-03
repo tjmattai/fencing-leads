@@ -53,6 +53,8 @@ function AppContent() {
 
   return (
     <Routes>
+      <Route path="/" element={<LeadCapturePage />} />
+      <Route path="/new-customer" element={<LeadCapturePage />} />
       <Route path="/" element={
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-gray-800/50 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-gray-700">
