@@ -73,8 +73,11 @@ export default function LeadCapturePage() {
         description: formData.get('description')
       };
 
+      console.log('Submitting form data:', data);
+
       const response = await fetch('https://script.google.com/macros/s/AKfycbxDegMyX17A98SpEeYPwWYtDxotW6gn1SLDfZ-V7iaXPciA5Ctav4WrpFlXEQzTlzlZ/exec', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -82,16 +85,11 @@ export default function LeadCapturePage() {
         body: JSON.stringify(data)
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Form submitted successfully:', result);
+      console.log('Form submitted with no-cors mode');
       setSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
-      alert('Unable to submit form. Please try again later or contact us directly.');
+      alert(`Unable to submit form: ${error.message}. Please try again later or contact us directly.`);
     } finally {
       setIsSubmitting(false);
     }
