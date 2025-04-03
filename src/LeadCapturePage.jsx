@@ -71,40 +71,24 @@ export default function LeadCapturePage() {
 
     try {
       const formData = new FormData(e.target);
-      const photos = await Promise.all(Array.from(selectedFiles).map(async file => {
-        console.log('Processing file:', file.name, file.type, file.size);
-        const base64 = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-          reader.readAsDataURL(file);
-        });
-        console.log('File converted to base64, length:', base64.length);
-        return {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          base64: base64
-        };
-      }));
+      
+      // Add photos to FormData
+      selectedFiles.forEach((file, index) => {
+        formData.append(`photo${index}`, file);
+      });
 
-      const data = {
-        fullName: formData.get('fullName'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        address: formData.get('address'),
-        description: formData.get('description'),
-        photos: photos
-      };
-
-      console.log('Submitting form data with photos:', data);
+      console.log('Submitting form with photos:', {
+        fileCount: selectedFiles.length,
+        files: Array.from(selectedFiles).map(f => ({
+          name: f.name,
+          type: f.type,
+          size: f.size
+        }))
+      });
 
       const response = await fetch('https://script.google.com/macros/s/AKfycbxDegMyX17A98SpEeYPwWYtDxotW6gn1SLDfZ-V7iaXPciA5Ctav4WrpFlXEQzTlzlZ/exec', {
         method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
+        body: formData
       });
 
       console.log('Form submitted successfully');
