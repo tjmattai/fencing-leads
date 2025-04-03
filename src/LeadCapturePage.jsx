@@ -71,25 +71,32 @@ export default function LeadCapturePage() {
 
     try {
       const formData = new FormData(e.target);
+      const photos = await Promise.all(Array.from(selectedFiles).map(async file => {
+        console.log('Processing file:', file.name, file.type, file.size);
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+          reader.readAsDataURL(file);
+        });
+        console.log('File converted to base64, length:', base64.length);
+        return {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          base64: base64
+        };
+      }));
+
       const data = {
         fullName: formData.get('fullName'),
         email: formData.get('email'),
         phone: formData.get('phone'),
         address: formData.get('address'),
         description: formData.get('description'),
-        photos: await Promise.all(Array.from(selectedFiles).map(async file => ({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          base64: await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-            reader.readAsDataURL(file);
-          })
-        })))
+        photos: photos
       };
 
-      console.log('Submitting form data:', data);
+      console.log('Submitting form data with photos:', data);
 
       const response = await fetch('https://script.google.com/macros/s/AKfycbxDegMyX17A98SpEeYPwWYtDxotW6gn1SLDfZ-V7iaXPciA5Ctav4WrpFlXEQzTlzlZ/exec', {
         method: 'POST',
@@ -100,8 +107,6 @@ export default function LeadCapturePage() {
         body: JSON.stringify(data)
       });
 
-      // Since we're using no-cors mode, we can't check the response
-      // Assume success if no error is thrown
       console.log('Form submitted successfully');
       setSubmitted(true);
     } catch (error) {
