@@ -81,23 +81,17 @@ export default function LeadCapturePage() {
 
       console.log('Submitting form data:', data);
 
-      const response = await fetch('/.netlify/functions/submit-form', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxDegMyX17A98SpEeYPwWYtDxotW6gn1SLDfZ-V7iaXPciA5Ctav4WrpFlXEQzTlzlZ/exec', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to submit form');
-      }
-
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to submit form');
-      }
-
+      // Since we're using no-cors mode, we can't check the response
+      // Assume success if no error is thrown
       console.log('Form submitted successfully');
       setSubmitted(true);
     } catch (error) {
