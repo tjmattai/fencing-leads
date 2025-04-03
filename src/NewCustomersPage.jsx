@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 
+// Add Google Analytics script
+const addGoogleAnalytics = () => {
+  const script1 = document.createElement('script');
+  script1.async = true;
+  script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-L0HWQQ5GKC';
+  document.head.appendChild(script1);
+
+  const script2 = document.createElement('script');
+  script2.innerHTML = `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-L0HWQQ5GKC');
+  `;
+  document.head.appendChild(script2);
+};
+
 const Input = ({ label, name, type = "text", placeholder }) => {
   return (
     <div>
@@ -21,6 +38,10 @@ export default function NewCustomersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
   const [phone, setPhone] = useState("");
+
+  useEffect(() => {
+    addGoogleAnalytics();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
