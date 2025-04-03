@@ -62,22 +62,30 @@ export default function LeadCapturePage() {
     e.preventDefault();
     const formData = new FormData(e.target);
 
-    const data = {
-      fullName: formData.get("fullName"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      address: formData.get("address"),
-      description: formData.get("description")
-    };
+    // Get the file input element
+    const fileInput = document.getElementById('file-upload');
+    const files = fileInput.files;
+
+    // Create FormData for file upload
+    const formDataToSend = new FormData();
+    formDataToSend.append('fullName', formData.get('fullName'));
+    formDataToSend.append('email', formData.get('email'));
+    formDataToSend.append('phone', formData.get('phone'));
+    formDataToSend.append('address', formData.get('address'));
+    formDataToSend.append('description', formData.get('description'));
+
+    // Append each file to FormData
+    if (files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        formDataToSend.append('photos', files[i]);
+      }
+    }
 
     try {
       const response = await fetch("https://script.google.com/macros/s/AKfycbyTcFlTCQsMTi8zxXy1fkGqF3M6zJl95HsRED-JC7Q4dzPRw_ngr8lU3R-157EprRGANw/exec", {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+        body: formDataToSend
       });
 
       // Since we're using no-cors mode, we can't check response.ok
