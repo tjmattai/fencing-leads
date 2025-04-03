@@ -190,48 +190,48 @@ export default function LeadCapturePage() {
             </div>
 
             {/* Trust Indicators Sidebar */}
-            <div className="md:w-1/3 space-y-4">
-              <div className="bg-gray-800/50 p-4 rounded-xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Why Choose Us</h3>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="md:w-1/3 space-y-3">
+              <div className="bg-gray-800/50 p-3 rounded-xl">
+                <h3 className="text-lg font-semibold text-white mb-2">Why Choose Us</h3>
+                <div className="space-y-2">
+                  <div className="flex items-start space-x-2">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-white font-medium">Licensed & Insured</h4>
-                      <p className="text-gray-400 text-sm">All work performed by licensed and insured contractors</p>
+                      <h4 className="text-white font-medium text-sm">Licensed & Insured</h4>
+                      <p className="text-gray-400 text-xs">All work performed by licensed and insured contractors</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-start space-x-2">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-white font-medium">Experienced Team</h4>
-                      <p className="text-gray-400 text-sm">Skilled installation professionals</p>
+                      <h4 className="text-white font-medium text-sm">Experienced Team</h4>
+                      <p className="text-gray-400 text-xs">Skilled installation professionals</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-start space-x-2">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-white font-medium">Professional Service</h4>
-                      <p className="text-gray-400 text-sm">Dedicated to customer satisfaction</p>
+                      <h4 className="text-white font-medium text-sm">Professional Service</h4>
+                      <p className="text-gray-400 text-xs">Dedicated to customer satisfaction</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-800/50 p-4 rounded-xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Service Area</h3>
-                <div className="relative w-full aspect-[3/2] mb-2 rounded-lg overflow-hidden bg-white">
+              <div className="bg-gray-800/50 p-3 rounded-xl">
+                <h3 className="text-lg font-semibold text-white mb-2">Service Area</h3>
+                <div className="relative w-full aspect-[3/2] mb-1 rounded-lg overflow-hidden bg-white">
                   <img 
                     src="/tampa-bay-map.png" 
                     alt="Tampa Bay Service Area" 
@@ -240,11 +240,11 @@ export default function LeadCapturePage() {
                     decoding="sync"
                   />
                 </div>
-                <p className="text-gray-400 text-sm">Serving the greater Tampa Bay area.</p>
+                <p className="text-gray-400 text-xs">Serving the greater Tampa Bay area.</p>
               </div>
-              <div className="bg-gray-800/50 p-4 rounded-xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Meet the Pros</h3>
-                <div className="relative w-full aspect-[3/2] mb-2 rounded-lg overflow-hidden bg-white">
+              <div className="bg-gray-800/50 p-3 rounded-xl">
+                <h3 className="text-lg font-semibold text-white mb-2">Meet the Pros</h3>
+                <div className="relative w-full aspect-[3/2] mb-1 rounded-lg overflow-hidden bg-white">
                   <img 
                     src="/sunshine-fence-pros.png" 
                     alt="Sunshine State Fences Team" 
@@ -253,7 +253,7 @@ export default function LeadCapturePage() {
                     decoding="sync"
                   />
                 </div>
-                <p className="text-gray-400 text-sm">Our experienced team is ready to help with your fencing needs.</p>
+                <p className="text-gray-400 text-xs">Our experienced team is ready to help with your fencing needs.</p>
               </div>
             </div>
           </div>
