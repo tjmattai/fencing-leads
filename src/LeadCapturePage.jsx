@@ -75,17 +75,16 @@ export default function LeadCapturePage() {
 
       console.log('Submitting form data:', data);
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxDegMyX17A98SpEeYPwWYtDxotW6gn1SLDfZ-V7iaXPciA5Ctav4WrpFlXEQzTlzlZ/exec', {
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
-        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`
         },
         body: JSON.stringify(data)
       });
 
-      console.log('Form submitted with no-cors mode');
+      console.log('Form submitted with SendGrid API');
       setSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
