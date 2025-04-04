@@ -1,4 +1,4 @@
-const { google } = require('googleapis');
+const nodemailer = require('nodemailer');
 
 exports.handler = async function(event, context) {
   // Set CORS headers
@@ -29,36 +29,32 @@ exports.handler = async function(event, context) {
   try {
     const data = JSON.parse(event.body);
     
-    // Create Gmail API client
-    const auth = new google.auth.GoogleAuth({
-      credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-      scopes: ['https://www.googleapis.com/auth/gmail.send']
-    });
-
-    const gmail = google.gmail({ version: 'v1', auth });
-
-    // Create email message
-    const email = [
-      'From: marshallmathers1224@gmail.com',
-      'To: tjmattai@gmail.com',
-      'Subject: New Lead Form Submission',
-      'Content-Type: text/plain; charset=utf-8',
-      '',
-      `New Lead Form Submission:
-      Name: ${data.fullName}
-      Email: ${data.email}
-      Phone: ${data.phone}
-      Address: ${data.address}
-      Description: ${data.description}`
-    ].join('\n');
-
-    // Send email
-    await gmail.users.messages.send({
-      userId: 'me',
-      requestBody: {
-        raw: Buffer.from(email).toString('base64')
+    // Create transporter using Gmail SMTP
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'marshallmathers1224@gmail.com',
+        pass: process.env.GMAIL_APP_PASSWORD
       }
     });
+
+    // Email content
+    const mailOptions = {
+      from: 'marshallmathers1224@gmail.com',
+      to: 'tjmattai@gmail.com',
+      subject: 'New Lead Form Submission',
+      text: `
+        New Lead Form Submission:
+        Name: ${data.fullName}
+        Email: ${data.email}
+        Phone: ${data.phone}
+        Address: ${data.address}
+        Description: ${data.description}
+      `
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
     
     return {
       statusCode: 200,
