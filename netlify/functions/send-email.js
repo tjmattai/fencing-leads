@@ -35,7 +35,9 @@ exports.handler = async function(event, context) {
     
     console.log('Creating transporter');
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
       auth: {
         user: 'marshallmathers1224@gmail.com',
         pass: process.env.GMAIL_APP_PASSWORD
