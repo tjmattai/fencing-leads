@@ -1,6 +1,7 @@
 {
   "name": "functions",
   "version": "1.0.0",
+  "description": "Netlify Functions",
   "main": "send-email.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -8,8 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@sendgrid/mail": "^8.1.4"
+    "googleapis": "^128.0.0"
   }
 }

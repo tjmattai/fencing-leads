@@ -1,4 +1,4 @@
-const sgMail = require('@sendgrid/mail');
+const { google } = require('googleapis');
 
 exports.handler = async function(event, context) {
   // Set CORS headers
@@ -29,23 +29,36 @@ exports.handler = async function(event, context) {
   try {
     const data = JSON.parse(event.body);
     
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    // Create Gmail API client
+    const auth = new google.auth.GoogleAuth({
+      credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
+      scopes: ['https://www.googleapis.com/auth/gmail.send']
+    });
 
-    const msg = {
-      to: 'tjmattai@gmail.com',
-      from: 'marshallmathers1224@gmail.com',
-      subject: 'New Lead Form Submission',
-      text: `
-        New Lead Form Submission:
-        Name: ${data.fullName}
-        Email: ${data.email}
-        Phone: ${data.phone}
-        Address: ${data.address}
-        Description: ${data.description}
-      `
-    };
+    const gmail = google.gmail({ version: 'v1', auth });
 
-    await sgMail.send(msg);
+    // Create email message
+    const email = [
+      'From: marshallmathers1224@gmail.com',
+      'To: tjmattai@gmail.com',
+      'Subject: New Lead Form Submission',
+      'Content-Type: text/plain; charset=utf-8',
+      '',
+      `New Lead Form Submission:
+      Name: ${data.fullName}
+      Email: ${data.email}
+      Phone: ${data.phone}
+      Address: ${data.address}
+      Description: ${data.description}`
+    ].join('\n');
+
+    // Send email
+    await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: {
+        raw: Buffer.from(email).toString('base64')
+      }
+    });
     
     return {
       statusCode: 200,
