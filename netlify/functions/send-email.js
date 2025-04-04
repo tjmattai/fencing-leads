@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer');
 
 exports.handler = async function(event, context) {
+  console.log('Function started');
+  
   // Set CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -27,9 +29,11 @@ exports.handler = async function(event, context) {
   }
 
   try {
+    console.log('Parsing request body');
     const data = JSON.parse(event.body);
+    console.log('Request data:', data);
     
-    // Create transporter using Gmail SMTP
+    console.log('Creating transporter');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -38,7 +42,7 @@ exports.handler = async function(event, context) {
       }
     });
 
-    // Email content
+    console.log('Setting up email options');
     const mailOptions = {
       from: 'marshallmathers1224@gmail.com',
       to: 'tjmattai@gmail.com',
@@ -53,8 +57,9 @@ exports.handler = async function(event, context) {
       `
     };
 
-    // Send email
-    await transporter.sendMail(mailOptions);
+    console.log('Attempting to send email');
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully:', info);
     
     return {
       statusCode: 200,
@@ -62,11 +67,19 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ message: 'Email sent successfully' })
     };
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Detailed error:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      response: error.response
+    });
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      })
     };
   }
 }; 
