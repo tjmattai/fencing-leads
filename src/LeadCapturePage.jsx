@@ -74,6 +74,7 @@ export default function LeadCapturePage() {
       };
 
       console.log('Submitting form data:', data);
+      console.log('SendGrid API Key available:', !!process.env.SENDGRID_API_KEY);
 
       const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
