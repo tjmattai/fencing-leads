@@ -74,18 +74,58 @@ export default function LeadCapturePage() {
       };
 
       console.log('Submitting form data:', data);
-      console.log('SendGrid API Key available:', !!process.env.SENDGRID_API_KEY);
+      console.log('SendGrid API Key available:', !!import.meta.env.VITE_SENDGRID_API_KEY);
 
-      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      // Send to Google Apps Script for Google Sheets
+      const sheetsResponse = await fetch('https://script.google.com/macros/s/AKfycbxDegMyX17A98SpEeYPwWYtDxotW6gn1SLDfZ-V7iaXPciA5Ctav4WrpFlXEQzTlzlZ/exec', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`
+          'Accept': 'application/json'
         },
         body: JSON.stringify(data)
       });
 
-      console.log('Form submitted with SendGrid API');
+      // Send to SendGrid API
+      const sendgridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SENDGRID_API_KEY}`
+        },
+        body: JSON.stringify({
+          personalizations: [{
+            to: [{ email: 'tjmattai@gmail.com' }]
+          }],
+          from: { email: 'marshallmathers1224@gmail.com' },
+          subject: 'New Lead Form Submission',
+          content: [{
+            type: 'text/plain',
+            value: `
+              New Lead Form Submission:
+              Name: ${data.fullName}
+              Email: ${data.email}
+              Phone: ${data.phone}
+              Address: ${data.address}
+              Description: ${data.description}
+            `
+          }]
+        })
+      });
+
+      if (!sendgridResponse.ok) {
+        const errorText = await sendgridResponse.text();
+        console.error('SendGrid API Error:', {
+          status: sendgridResponse.status,
+          statusText: sendgridResponse.statusText,
+          error: errorText
+        });
+        throw new Error(`SendGrid API error: ${errorText}`);
+      }
+
+      const result = await sendgridResponse.json();
+      console.log('Email sent successfully via SendGrid:', result);
       setSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
