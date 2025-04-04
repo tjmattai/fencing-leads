@@ -1,9 +1,29 @@
 const sgMail = require('@sendgrid/mail');
 
 exports.handler = async function(event, context) {
+  // Set CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
   // Only allow POST
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: 'Method Not Allowed' })
+    };
   }
 
   try {
@@ -29,12 +49,14 @@ exports.handler = async function(event, context) {
     
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({ message: 'Email sent successfully' })
     };
   } catch (error) {
     console.error('Error sending email:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: error.message })
     };
   }
